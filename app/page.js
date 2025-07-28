@@ -1,103 +1,84 @@
-import Image from "next/image";
+"use client"
+import { useState } from "react";
 
-export default function Home() {
+export default function HomePage() {
+  const [to, setTo] = useState("");
+  const [subject, setSubject] = useState("ทดสอบจาก Next.js + Resend");
+  const [text, setText] = useState("นี่คืออีเมลทดสอบที่ส่งจากหน้าเว็บ");
+  const [status, setStatus] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("⏳ กำลังส่ง...");
+
+    try {
+      const res = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ to, subject, text }),
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setStatus("✅ ส่งเมลสำเร็จ!");
+      } else {
+        console.error("Send error:", data.error);
+        setStatus("❌ ส่งเมลไม่สำเร็จ");
+      }
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setStatus("❌ เกิดข้อผิดพลาด");
+    }
+  };
+
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main style={{ maxWidth: "600px", margin: "auto", padding: "2rem" }}>
+      <h1 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>📧 ทดสอบส่งอีเมล</h1>
+      <form onSubmit={handleSubmit} style={{ marginTop: "1rem" }}>
+        <div style={{ marginBottom: "1rem" }}>
+          <label>To (Email):</label>
+          <input
+            type="email"
+            value={to}
+            onChange={(e) => setTo(e.target.value)}
+            required
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
+          />
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
+        <div style={{ marginBottom: "1rem" }}>
+          <label>Subject:</label>
+          <input
+            type="text"
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
           />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
+        </div>
+        <div style={{ marginBottom: "1rem" }}>
+          <label>Message:</label>
+          <textarea
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={4}
+            style={{ width: "100%", padding: "0.5rem", marginTop: "0.25rem" }}
           />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+        </div>
+        <button
+          type="submit"
+          style={{
+            backgroundColor: "#2563eb",
+            color: "white",
+            padding: "0.5rem 1rem",
+            border: "none",
+            borderRadius: "0.25rem",
+          }}
         >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
+          ส่งอีเมล
+        </button>
+      </form>
+      {status && <p style={{ marginTop: "1rem" }}>{status}</p>}
+    </main>
   );
 }

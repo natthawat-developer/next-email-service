@@ -1,36 +1,64 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# next-email-service
 
-## Getting Started
+A simple email sending system using Next.js and [Resend](https://resend.com)
 
-First, run the development server:
+---
+
+## Environment Variables
+
+Create a `.env.local` file and add the following:
+
+```env
+RESEND_API_KEY=your_resend_api_key
+````
+
+> Sign up and generate your API key at [https://resend.com](https://resend.com)
+
+---
+
+## Run the Project
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open your browser at [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Project Structure
 
-## Learn More
+```
+next-email-service/
+├── app/
+│   ├── api/
+│   │   └── send-email/
+│   │       └── route.js         # API route for sending email
+│   └── page.js                  # Web form to send email
+├── .env.local                   # Contains RESEND_API_KEY
+├── package.json
+└── README.md
+```
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Sample Email Payload
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Send a POST request to `/api/send-email`:
 
-## Deploy on Vercel
+```json
+{
+  "to": "someone@example.com",
+  "subject": "Test from Next.js",
+  "text": "This is a test message from the system."
+}
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Notes
+
+* `onboarding@resend.dev` is the default sender email provided by Resend for unverified domains.
+* To ensure emails reach the inbox (not spam), you should verify your domain and configure DNS settings in your Resend dashboard.
+
+---
